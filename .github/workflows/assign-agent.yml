@@ -1,0 +1,27 @@
+name: Assign issues to Copilot
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign issue to Copilot
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                assignees: ['copilot']
+              });
+            } catch (error) {
+              core.warning(`Could not assign issue to copilot: ${error.message}`);
+            }
